@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 10, 10, 20;
+  --background-end-rgb: 0, 0, 0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,47 +20,164 @@ body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
-      transparent,
+      rgb(var(--background-start-rgb)),
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb));
+    no-repeat;
+  min-height: 100vh;
 }
 
-/* Custom styles for timetable grid */
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 15, 25, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(79, 70, 229, 0.6);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.8);
+}
+
+/* Timetable Grid */
 .timetable-grid {
   display: grid;
-  grid-template-columns: 100px repeat(5, 1fr);
+  grid-template-columns: 120px repeat(5, 1fr);
   gap: 1px;
-  background-color: #e5e7eb;
+  background-color: rgba(55, 65, 81, 0.3);
   border-radius: 0.5rem;
   overflow: hidden;
 }
 
 .timetable-header {
-  background-color: #4f46e5;
-  color: white;
+  background-color: rgba(79, 70, 229, 0.2);
   padding: 0.75rem;
-  text-align: center;
   font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid rgba(79, 70, 229, 0.3);
 }
 
 .timetable-time {
-  background-color: #f3f4f6;
-  padding: 0.5rem;
-  text-align: center;
+  background-color: rgba(79, 70, 229, 0.1);
+  padding: 0.75rem;
   font-weight: 500;
-  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+  border-right: 1px solid rgba(79, 70, 229, 0.3);
 }
 
 .timetable-cell {
-  background-color: white;
-  padding: 0.5rem;
-  min-height: 5rem;
-  border-bottom: 1px solid #e5e7eb;
+  background-color: rgba(30, 41, 59, 0.5);
+  padding: 0.75rem;
+  min-height: 6rem;
+  transition: all 0.2s;
 }
 
 .timetable-cell.filled {
-  background-color: #e0e7ff;
+  background-color: rgba(79, 70, 229, 0.1);
+  border: 1px solid rgba(79, 70, 229, 0.3);
+}
+
+.timetable-cell:hover {
+  background-color: rgba(79, 70, 229, 0.2);
+}
+
+/* Data tables */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.data-table th {
+  background-color: rgba(79, 70, 229, 0.1);
+  color: rgba(199, 210, 254, 1);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(79, 70, 229, 0.3);
+}
+
+.data-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(55, 65, 81, 0.2);
+}
+
+.data-table tr:hover td {
+  background-color: rgba(79, 70, 229, 0.05);
+}
+
+/* Glass card effect */
+.glass-card {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  border: 1px solid rgba(79, 70, 229, 0.1);
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Navbar styles */

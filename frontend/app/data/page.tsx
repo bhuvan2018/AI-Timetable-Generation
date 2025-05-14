@@ -25,12 +25,25 @@ export default function DataPage() {
     const loadData = async () => {
       try {
         setLoading(true);
-        const result = await timetableApi.loadData();
-        setData(result);
         setError(null);
+        
+        const result = await timetableApi.loadData();
+        console.log('API Response:', result);
+        
+        // Check if we got valid data
+        if (!result || typeof result !== 'object') {
+          throw new Error('Invalid response from server');
+        }
+        
+        setData({
+          teachers: Array.isArray(result.teachers) ? result.teachers : [],
+          rooms: Array.isArray(result.rooms) ? result.rooms : [],
+          subjects: Array.isArray(result.subjects) ? result.subjects : [],
+          classes: Array.isArray(result.classes) ? result.classes : []
+        });
       } catch (err) {
         console.error('Failed to load data:', err);
-        setError('Failed to load data. Please try again later.');
+        setError('Failed to load data. Please ensure the backend server is running.');
       } finally {
         setLoading(false);
       }
@@ -39,48 +52,110 @@ export default function DataPage() {
     loadData();
   }, []);
 
+  const handleRefresh = () => {
+    setLoading(true);
+    timetableApi.loadData()
+      .then(result => {
+        setData({
+          teachers: Array.isArray(result.teachers) ? result.teachers : [],
+          rooms: Array.isArray(result.rooms) ? result.rooms : [],
+          subjects: Array.isArray(result.subjects) ? result.subjects : [],
+          classes: Array.isArray(result.classes) ? result.classes : []
+        });
+        setError(null);
+      })
+      .catch(err => {
+        console.error('Failed to refresh data:', err);
+        setError('Failed to refresh data. Please try again later.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Dataset Viewer</h1>
+    <div className="glass-card animate-fade-in">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-indigo-300">Dataset Viewer</h1>
+        <button
+          onClick={handleRefresh}
+          disabled={loading}
+          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        >
+          {loading ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Loading...
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh Data
+            </>
+          )}
+        </button>
+      </div>
       
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin h-16 w-16 border-t-2 border-b-2 border-indigo-500 rounded-full"></div>
         </div>
       ) : error ? (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p>{error}</p>
+        <div className="bg-red-900/20 border border-red-700 text-red-200 px-6 py-5 rounded-lg">
+          <div className="flex items-center">
+            <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <p>{error}</p>
+          </div>
+          <div className="mt-4 space-y-3">
+            <p className="text-sm">Troubleshooting tips:</p>
+            <ul className="list-disc pl-5 text-sm">
+              <li>Ensure the backend server is running on port 8000</li>
+              <li>Check if the datasets directory contains the CSV files</li>
+              <li>Verify that CORS is properly configured on the backend</li>
+            </ul>
+          </div>
         </div>
       ) : (
         <>
-          <div className="flex border-b border-gray-200 mb-6">
-            <button
-              className={`px-4 py-2 ${activeTab === 'teachers' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+          <div className="flex flex-wrap border-b border-gray-700 mb-6 gap-1">
+            <TabButton 
+              active={activeTab === 'teachers'} 
               onClick={() => setActiveTab('teachers')}
+              count={data.teachers.length}
             >
-              Teachers ({data.teachers.length})
-            </button>
-            <button
-              className={`px-4 py-2 ${activeTab === 'rooms' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+              Teachers
+            </TabButton>
+            <TabButton 
+              active={activeTab === 'rooms'} 
               onClick={() => setActiveTab('rooms')}
+              count={data.rooms.length}
             >
-              Rooms ({data.rooms.length})
-            </button>
-            <button
-              className={`px-4 py-2 ${activeTab === 'subjects' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+              Rooms
+            </TabButton>
+            <TabButton 
+              active={activeTab === 'subjects'} 
               onClick={() => setActiveTab('subjects')}
+              count={data.subjects.length}
             >
-              Subjects ({data.subjects.length})
-            </button>
-            <button
-              className={`px-4 py-2 ${activeTab === 'classes' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+              Subjects
+            </TabButton>
+            <TabButton 
+              active={activeTab === 'classes'} 
               onClick={() => setActiveTab('classes')}
+              count={data.classes.length}
             >
-              Classes ({data.classes.length})
-            </button>
+              Classes
+            </TabButton>
           </div>
 
-          <div className="bg-white shadow-md rounded-lg p-6">
+          <div className="bg-gray-800/40 shadow-lg rounded-lg p-6 border border-gray-700">
             {activeTab === 'teachers' && <TeacherTable teachers={data.teachers} />}
             {activeTab === 'rooms' && <RoomTable rooms={data.rooms} />}
             {activeTab === 'subjects' && <SubjectTable subjects={data.subjects} />}
@@ -89,5 +164,32 @@ export default function DataPage() {
         </>
       )}
     </div>
+  );
+}
+
+interface TabButtonProps {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  count: number;
+}
+
+function TabButton({ active, onClick, children, count }: TabButtonProps) {
+  return (
+    <button
+      className={`px-5 py-3 focus:outline-none transition-all duration-200 flex items-center ${
+        active 
+          ? 'border-b-2 border-indigo-500 text-indigo-400 font-medium' 
+          : 'text-gray-400 hover:text-gray-300 hover:border-b-2 hover:border-gray-500'
+      }`}
+      onClick={onClick}
+    >
+      {children}
+      <span className={`ml-2 text-xs rounded-full px-2 py-1 ${
+        active ? 'bg-indigo-900/50 text-indigo-300' : 'bg-gray-800 text-gray-400'
+      }`}>
+        {count}
+      </span>
+    </button>
   );
 } 

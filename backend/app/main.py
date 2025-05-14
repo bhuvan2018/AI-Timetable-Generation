@@ -1,8 +1,33 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+import logging
+import os
 
 from .routes import timetable, ml
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger("ai-timetable")
+logger.setLevel(logging.INFO)
+
+# Check for datasets directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+datasets_dir = os.path.abspath(os.path.join(current_dir, "../../datasets"))
+if not os.path.exists(datasets_dir):
+    logger.warning(f"Datasets directory not found at {datasets_dir}")
+    # Try to create datasets directory
+    try:
+        os.makedirs(datasets_dir, exist_ok=True)
+        logger.info(f"Created datasets directory at {datasets_dir}")
+    except Exception as e:
+        logger.error(f"Failed to create datasets directory: {str(e)}")
 
 app = FastAPI(
     title="AI Timetable Generator",

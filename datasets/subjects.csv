@@ -1,21 +1,21 @@
 subject_id,name,hours_per_week,requires_features,preferred_teachers
-S001,Mathematics,5,"whiteboard","T001,T008,T015"
-S002,Physics,4,"whiteboard,lab_equipment","T001,T007"
-S003,Chemistry,4,"lab_equipment,sink","T003,T014"
-S004,Biology,3,"lab_equipment,whiteboard","T003"
-S005,Computer Science,5,"computer,projector","T002,T011"
-S006,English Literature,4,"whiteboard","T004"
-S007,History,3,"whiteboard,projector","T005"
-S008,Economics,3,"whiteboard,projector","T006"
-S009,Physical Education,3,"","T009"
-S010,Psychology,3,"whiteboard,projector","T010"
-S011,Art,2,"art_supplies","T012"
-S012,Music,2,"sound_system,piano","T013"
-S013,Business Studies,3,"whiteboard,projector","T006"
-S014,Engineering,4,"computer,lab_equipment","T015"
-S015,Statistics,3,"whiteboard,computer","T008"
-S016,Data Science,4,"computer,projector","T011"
-S017,Artificial Intelligence,3,"computer,projector","T002"
-S018,Creative Writing,2,"whiteboard","T004"
-S019,Political Science,2,"whiteboard,projector","T005"
-S020,Sociology,3,"whiteboard,projector","T010" 
+S001,Mathematics,5,,T001
+S002,English,5,,T002
+S003,Physics,4,lab_equipment,T003
+S004,Chemistry,4,lab_equipment,T004
+S005,Biology,4,lab_equipment,T005
+S006,Computer Science,4,computers,T006
+S007,History,3,,T007
+S008,Geography,3,,T008
+S009,Art,3,art_supplies,T009
+S010,Music,2,instruments,T010
+S011,Physical Education,3,sports_equipment,T011
+S012,Economics,3,,T012
+S013,Business Studies,3,,T013
+S014,Psychology,3,,T014
+S015,Sociology,3,,T015
+S016,Algebra,3,,T001
+S017,Literature,3,,T002
+S018,Electronics,3,lab_equipment,T003
+S019,Organic Chemistry,3,lab_equipment,T004
+S020,Programming,4,computers,T006 
