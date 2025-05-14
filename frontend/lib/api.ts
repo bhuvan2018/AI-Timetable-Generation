@@ -100,6 +100,17 @@ export interface UpdateTimetableRequest {
 
 // API functions
 export const timetableApi = {
+  // Load data from CSV files
+  loadData: async () => {
+    try {
+      const response = await api.get('/timetable/data');
+      return response.data;
+    } catch (error) {
+      console.error('Error loading data from CSV files:', error);
+      throw error;
+    }
+  },
+
   // Generate a new timetable
   generateTimetable: async (request: TimetableGenerationRequest, timeLimit: number = 60) => {
     try {

@@ -43,6 +43,12 @@ export default function Home() {
           >
             View Existing Timetables
           </Link>
+          <Link 
+            href="/data" 
+            className="bg-green-100 hover:bg-green-200 text-green-800 font-bold py-3 px-6 rounded-lg"
+          >
+            Browse Data
+          </Link>
         </div>
       </div>
     </main>

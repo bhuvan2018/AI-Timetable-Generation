@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from ..services.timetable_service import TimetableService
 from ..schemas.timetable import (
     TimetableGenerationRequest, GeneratedTimetable, 
-    UpdateTimetableRequest, TimetableAnalytics
+    UpdateTimetableRequest, TimetableAnalytics,
+    Teacher, Room, Subject, Class
 )
 
 router = APIRouter(
@@ -17,6 +18,15 @@ def get_timetable_service():
     """Dependency injection for TimetableService"""
     return TimetableService()
 
+@router.get("/data", response_model=Dict[str, List[Any]])
+async def get_data(
+    service: TimetableService = Depends(get_timetable_service)
+):
+    """
+    Load data from CSV files and return it
+    """
+    return await service.load_data()
+
 @router.post("/generate", response_model=Dict[str, Any])
 async def generate_timetable(
     request: TimetableGenerationRequest,
@@ -24,7 +34,8 @@ async def generate_timetable(
     service: TimetableService = Depends(get_timetable_service)
 ):
     """
-    Generate a new timetable based on the provided constraints and requirements
+    Generate a new timetable based on the provided constraints and requirements.
+    If no data is provided, data will be loaded from CSV files.
     """
     result = await service.generate_timetable(request, time_limit_seconds)
     if "error" in result:

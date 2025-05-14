@@ -1,8 +1,10 @@
 from typing import List, Dict, Optional
 import uuid
 from datetime import datetime
+import os
 
 from ..core.optimizer import TimetableOptimizer
+from ..database.csv_loader import CSVDataLoader
 from ..schemas.timetable import (
     Teacher, Room, Subject, Class, TimeSlot, 
     TimetableConstraints, TimetableEntry, GeneratedTimetable,
@@ -14,8 +16,16 @@ class TimetableService:
     
     def __init__(self):
         self.optimizer = TimetableOptimizer()
+        # Set the correct path to the datasets directory
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        datasets_dir = os.path.abspath(os.path.join(current_dir, "../../../datasets"))
+        self.data_loader = CSVDataLoader(data_dir=datasets_dir)
         # In a real implementation, this would be a database
         self.saved_timetables: Dict[str, GeneratedTimetable] = {}
+    
+    async def load_data(self):
+        """Load data from CSV files"""
+        return self.data_loader.load_all_data()
     
     async def generate_timetable(
         self, request: TimetableGenerationRequest, time_limit_seconds: int = 60
@@ -30,6 +40,14 @@ class TimetableService:
         Returns:
             Dictionary containing the timetable ID and the generated timetable
         """
+        # If no data provided, try to load from CSV files
+        if not request.teachers and not request.rooms and not request.subjects and not request.classes:
+            data = await self.load_data()
+            request.teachers = data['teachers']
+            request.rooms = data['rooms']
+            request.subjects = data['subjects']
+            request.classes = data['classes']
+            
         # Validate input data
         # This is a basic validation; in a real system, we would do more extensive validation
         if not request.teachers:
