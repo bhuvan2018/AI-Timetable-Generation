@@ -4,7 +4,7 @@ import uvicorn
 import logging
 import os
 
-from .routes import timetable, ml
+from .routes import timetable, ml, database
 
 # Configure logging
 logging.basicConfig(
@@ -29,6 +29,14 @@ if not os.path.exists(datasets_dir):
     except Exception as e:
         logger.error(f"Failed to create datasets directory: {str(e)}")
 
+# Create exports directory if it doesn't exist
+exports_dir = os.path.abspath(os.path.join(current_dir, "../../exports"))
+try:
+    os.makedirs(exports_dir, exist_ok=True)
+    logger.info(f"Ensured exports directory exists at {exports_dir}")
+except Exception as e:
+    logger.error(f"Failed to create exports directory: {str(e)}")
+
 app = FastAPI(
     title="AI Timetable Generator",
     description="Intelligent system for generating optimized school/college timetables",
@@ -47,6 +55,7 @@ app.add_middleware(
 # Include routers
 app.include_router(timetable.router)
 app.include_router(ml.router)
+app.include_router(database.router)
 
 @app.get("/")
 async def root():
