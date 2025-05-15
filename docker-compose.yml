@@ -17,19 +17,18 @@ services:
       - timetable-network
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: node:18-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
     ports:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=development
     depends_on:
       - backend
     volumes:
       - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     networks:
       - timetable-network
 

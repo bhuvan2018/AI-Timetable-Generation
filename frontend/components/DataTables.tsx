@@ -37,7 +37,7 @@ export const TeacherTable: React.FC<{ teachers: Teacher[] }> = ({ teachers }) =>
                 {teacher.unavailable_slots && teacher.unavailable_slots.length > 0
                   ? teacher.unavailable_slots.map((slot, i) => (
                       <span key={i} className="inline-block bg-gray-800 text-xs px-2 py-1 rounded mr-1 mb-1">
-                        {`${slot.day || ''} ${slot.start_time || ''}-${slot.end_time || ''}`}
+                        {`${slot.start_time || ''}-${slot.end_time || ''}`}
                       </span>
                     ))
                   : <span className="text-gray-500 italic">Always available</span>

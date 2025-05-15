@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { timetableApi, GeneratedTimetable, ClassTimetable } from '../../lib/api';
+import { timetableApi, GeneratedTimetable, ClassTimetable, Subject, Teacher, Room } from '../../lib/api';
 import TimetableView from '../../components/TimetableView';
 
 export default function ViewPage() {
@@ -11,9 +11,9 @@ export default function ViewPage() {
   const [timetable, setTimetable] = useState<GeneratedTimetable | null>(null);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [subjects, setSubjects] = useState<any>({});
-  const [teachers, setTeachers] = useState<any>({});
-  const [rooms, setRooms] = useState<any>({});
+  const [subjects, setSubjects] = useState<Record<string, Subject>>({});
+  const [teachers, setTeachers] = useState<Record<string, Teacher>>({});
+  const [rooms, setRooms] = useState<Record<string, Room>>({});
 
   useEffect(() => {
     // Load sample data to display if no timetable is available
@@ -21,24 +21,24 @@ export default function ViewPage() {
       try {
         const result = await timetableApi.loadData();
         // Convert arrays to objects with IDs as keys
-        const subjectsMap = {};
-        const teachersMap = {};
-        const roomsMap = {};
+        const subjectsMap: Record<string, Subject> = {};
+        const teachersMap: Record<string, Teacher> = {};
+        const roomsMap: Record<string, Room> = {};
         
         if (result.subjects) {
-          result.subjects.forEach(subject => {
+          result.subjects.forEach((subject: Subject) => {
             subjectsMap[subject.id] = subject;
           });
         }
         
         if (result.teachers) {
-          result.teachers.forEach(teacher => {
+          result.teachers.forEach((teacher: Teacher) => {
             teachersMap[teacher.id] = teacher;
           });
         }
         
         if (result.rooms) {
-          result.rooms.forEach(room => {
+          result.rooms.forEach((room: Room) => {
             roomsMap[room.id] = room;
           });
         }
