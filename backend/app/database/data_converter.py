@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
 from .mongodb import mongodb
-from .csv_loader import load_csv_data
+from . import load_csv_data
 
 # Set up logging
 logger = logging.getLogger(__name__)

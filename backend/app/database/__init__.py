@@ -1,4 +1,9 @@
-from .csv_loader import load_csv_data
+from .csv_loader import CSVDataLoader
 from .mongodb import mongodb
 
-__all__ = ["load_csv_data", "mongodb"] 
+def load_csv_data():
+    """Helper function to load all CSV data using CSVDataLoader."""
+    loader = CSVDataLoader()
+    return loader.load_all_data()
+
+__all__ = ["load_csv_data", "mongodb", "CSVDataLoader"] 
